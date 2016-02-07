@@ -2,10 +2,7 @@ package lights;
 
 import main.Log;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by nbroeking on 2/6/16.
@@ -49,12 +46,14 @@ public class GPIO {
     }
 
     public void on(){
-        String fullPath = path + "/gpio/"+ number +"/value";
+
+        String fullPath = path + "/gpio"+ number +"/value";
+        Log.d(TAG + number, "Turning On " + fullPath);
 
         state = PinState.ON;
-        FileWriter writer = null;
+        PrintWriter writer = null;
         try {
-            writer = new FileWriter(fullPath);
+            writer = new PrintWriter(fullPath, "UTF-8");
             writer.write("1");
         } catch (IOException e) {
             Log.e(TAG + number, "Could not turn on", e);
@@ -63,20 +62,21 @@ public class GPIO {
             if(writer != null){
                 try {
                     writer.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     Log.e(TAG + number, "Could not close writer", e);
                 }
             }
         }
     }
     public void off(){
-        String fullPath = path + "/gpio/"+ number +"/value";
+        Log.d(TAG + number, "Turning Off");
+        String fullPath = path + "/gpio"+ number +"/value";
 
         state = PinState.OFF;
-        FileWriter writer = null;
+        PrintWriter writer = null;
         try {
-            writer = new FileWriter(fullPath);
-            writer.write("1");
+            writer = new PrintWriter(fullPath, "UTF-8");
+            writer.write("0");
         } catch (IOException e) {
             Log.e(TAG + number, "Could not turn off", e);
         }
@@ -84,7 +84,7 @@ public class GPIO {
             if(writer != null){
                 try {
                     writer.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     Log.e(TAG + number, "Could not close writer", e);
                 }
             }
@@ -92,19 +92,23 @@ public class GPIO {
     }
 
     private void exportGpio(){
-        String fullPath = path + "/export";
-        FileWriter writer = null;
+        String fullPath = path + "/export"; // /sys/class/gpio/export
+
+        PrintWriter writer = null;
         try {
-            writer = new FileWriter(fullPath);
-            writer.write(number);
-        } catch (IOException e) {
+            writer = new PrintWriter(fullPath, "UTF-8");
+            writer.println("" + number);
+
+        } catch (Exception e) {
             Log.e(TAG + number, "Could not export", e);
         }
         finally {
             if(writer != null){
                 try {
+                    writer.flush();
                     writer.close();
-                } catch (IOException e) {
+                }
+                catch (Exception e){
                     Log.e(TAG + number, "Could not close writer", e);
                 }
             }
@@ -112,18 +116,19 @@ public class GPIO {
     }
     private void unexportGpio(){
         String fullPath = path + "/unexport";
-        FileWriter writer = null;
+        PrintWriter writer = null;
         try {
-            writer = new FileWriter(fullPath);
-            writer.write(number);
+            writer = new PrintWriter(fullPath, "UTF-8");
+            writer.write(""+number);
         } catch (IOException e) {
             Log.e(TAG + number, "Could not unexport", e);
         }
         finally {
             if(writer != null){
                 try {
+
                     writer.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     Log.e(TAG + number, "Could not close writer", e);
                 }
             }
@@ -134,7 +139,7 @@ public class GPIO {
     private void setDirection(Direction dir){
         direction = dir;
 
-        String fullPath = path + "/gpio/"+ number +"/direction";
+        String fullPath = path + "/gpio"+ number +"/direction";
         String dirString;
         switch (direction){
             case OUT:
@@ -148,9 +153,9 @@ public class GPIO {
                 return;
         }
 
-        FileWriter writer = null;
+        PrintWriter writer = null;
         try {
-            writer = new FileWriter(fullPath);
+            writer = new PrintWriter(fullPath, "UTF-8");
 
             writer.write(dirString);
         } catch (IOException e) {
@@ -160,7 +165,7 @@ public class GPIO {
             if(writer != null){
                 try {
                     writer.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     Log.e(TAG + number, "Could not close writer", e);
                 }
             }

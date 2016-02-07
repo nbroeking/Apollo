@@ -47,6 +47,7 @@ public class Log {
 
         System.err.println(tag + "- Error: " + s);
         if (e != null) {
+            System.err.print(e);
             e.printStackTrace();
         }
     }

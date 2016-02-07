@@ -1,6 +1,9 @@
 package main;
 
 import lights.LightManager;
+import main.Application;
+import main.Log;
+import main.Settings;
 
 import java.io.File;
 
@@ -23,7 +26,7 @@ public class Main {
                 mkdir("/tmp/gpio/gpio");
 
                 for( int i = 0; i < 50; i++){
-                    mkdir("/tmp/gpio/gpio/"+i);
+                    mkdir("/tmp/gpio/gpio"+i);
                 }
             }
         }

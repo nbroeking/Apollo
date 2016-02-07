@@ -5,8 +5,9 @@ import main.Application;
 import main.Log;
 import main.Settings;
 
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,19 +20,29 @@ public class LightManager implements SubSystem{
     private static final String TAG = "Light Manager";
     private ScheduledExecutorService executorService;
 
-    private Set<GPIO> pins;
+    private Map<Number,GPIO> pins;
     public LightManager(){
 
         Application.getApplication().registerSubsystem(this);
         executorService = Executors.newSingleThreadScheduledExecutor();
 
-        pins = new HashSet<>();
+        pins = new HashMap<>();
 
         if(Settings.getInstance().isDEBUG()){
-            pins.add(new GPIO(23, "/tmp/gpio/"));
+            pins.put(24, new GPIO(24, "/tmp/gpio/"));
+            pins.put(26, new GPIO(26, "/tmp/gpio/"));
+            pins.put(19, new GPIO(19, "/tmp/gpio/"));
+            pins.put(13, new GPIO(13, "/tmp/gpio/"));
+            pins.put(6, new GPIO(6, "/tmp/gpio/"));
+            pins.put(5, new GPIO(5, "/tmp/gpio/"));
         }
         else {
-            pins.add(new GPIO(23, "/sys/class/gpio"));
+            pins.put(24, new GPIO(24, "/sys/class/gpio"));
+            pins.put(26, new GPIO(26, "/sys/class/gpio"));
+            pins.put(19, new GPIO(19, "/sys/class/gpio"));
+            pins.put(13, new GPIO(13, "/sys/class/gpio"));
+            pins.put(6, new GPIO(6, "/sys/class/gpio"));
+            pins.put(5, new GPIO(5, "/sys/class/gpio"));
         }
     }
 
@@ -41,9 +52,47 @@ public class LightManager implements SubSystem{
             @Override
             public void run() {
                 //Toggle GPIO
-                Log.d(TAG, "Toggle");
+
+                int time = ((int)System.currentTimeMillis()/1000);
+
+                if( (time & 0b1) != 0){
+                    pins.get(6).on();
+                }
+                else{
+                    pins.get(6).off();
+                }
+
+                if( (time & 0b10) != 0){
+                    pins.get(19).on();
+                }
+                else{
+                    pins.get(19).off();
+                }
+
+                if( (time & 0b100) != 0){
+                    pins.get(24).on();
+                }
+                else{
+                    pins.get(24).off();
+                }
+
+                if( (time & 0b1000) != 0){
+                    pins.get(26).on();
+                }
+                else{
+                    pins.get(26).off();
+                }
+
+                if( (time & 0b10000) != 0){
+                    pins.get(5).on();
+
+                }
+                else{
+                    pins.get(5).off();
+                }
+
             }
-        }, 500, 500, TimeUnit.MILLISECONDS );
+        }, 1, 1, TimeUnit.SECONDS );
 
     }
 

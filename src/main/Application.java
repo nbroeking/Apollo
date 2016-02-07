@@ -47,7 +47,6 @@ public class Application {
 
                 getApplication().awaitCompletion();
                 //Wait for application to finish
-
             }
         });
     }
@@ -84,6 +83,7 @@ public class Application {
                             s.awaitTermination(); //Shuts down the thread
                         }
 
+                        running = false;
                         notifyAll();
                         return true;
                     }
@@ -91,7 +91,7 @@ public class Application {
                     runnable.run();
                 }
             } catch (InterruptedException e) {
-                Log.e(TAG, "Main Application Error");
+                Log.e(TAG, "main.Main Application Error");
             }
         }
     }
@@ -140,9 +140,9 @@ public class Application {
                 return;
             }
             try {
-                this.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG, "Could not wait till application closed", e);
+                this.wait(5000);
+            } catch (Exception e) {
+                Log.w(TAG, "Never recieved notification that application closed");
             }
         }
     }
