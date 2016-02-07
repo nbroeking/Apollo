@@ -5,6 +5,17 @@ package main;
  */
 public class Log {
 
+    static public void d(String tag, String s) {
+        i(tag, s, null);
+    }
+
+    static public void d(String tag, String s, Exception e) {
+        System.out.println(tag + "- Debug: " + s);
+        if (e != null) {
+            e.printStackTrace();
+        }
+    }
+
     static public void i(String tag, String s) {
         i(tag, s, null);
     }
@@ -21,8 +32,9 @@ public class Log {
     }
 
     static public void w(String tag, String s, Exception e) {
-        System.err.println(tag + "- Warning: " + s);
+        System.err.println(tag + "- Warning: " + s + " ");
         if (e != null) {
+            System.err.print(e);
             e.printStackTrace();
         }
     }

@@ -26,6 +26,19 @@ public class Application {
         running = false;
 
         subSystems = new HashSet<>();
+
+        //Add the start event
+        events.add(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "Starting Subsystems");
+                synchronized (Application.this) {
+                    for (SubSystem s : subSystems) {
+                        s.start();
+                    }
+                }
+            }
+        });
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -59,8 +72,8 @@ public class Application {
             return false;
         }
         running = true;
+        Log.i(TAG, "Application has been started");
         while (true) {
-            Log.i(TAG, "Application has been started");
             try {
                 Runnable runnable = events.take();
                 if (runnable == null || runnable.getClass() == Poison.class) {
@@ -118,7 +131,6 @@ public class Application {
      */
     public void registerSubsystem(SubSystem s) {
         subSystems.add(s);
-        s.start();
     }
 
     public void awaitCompletion() {
