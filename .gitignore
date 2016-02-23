@@ -17,3 +17,5 @@ Librarys
 Media
 *.mk
 obs
+
+*.csv

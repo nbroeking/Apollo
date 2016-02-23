@@ -14,10 +14,10 @@ Written By: Nicolas Broeking */
 #include <pulse/error.h>
 #include <fftw3.h>
 
-#define BUFSIZE 4096
+#define BUFSIZE 2048
 #define INSIZE (BUFSIZE/2)
 #define OUTPUTSIZE ((INSIZE/2)+1)
-#define MAXFREQ 22050
+#define MAXFREQ 44100/2
 #define MAXANALYZE (OUTPUTSIZE/4)
 
 class MainApplication

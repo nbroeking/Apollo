@@ -31,7 +31,7 @@ int MainApplication::run()
     m.unlock();
 	while (shouldRun)
 	{
-	    int8_t buf[BUFSIZE];
+	    int16_t buf[BUFSIZE];
        
         #ifndef DEBUG 
         /* Record some data ... */
@@ -53,20 +53,13 @@ int MainApplication::run()
             cout << endl << "End of raw data\n";
 
             //Combining the left and right streams
-           /* for( int i = 0; i < INSIZE; i++){
+           for( int i = 0; i < INSIZE; i++){
                 int16_t left = buf[i*2];
                 int16_t right = buf[i*2 +1];
 
                 in[i] = ((float)left + (float)right) / 65536.f;
-            }*/
-
-            for( int i = 0; i < INSIZE; i++){
-                int16_t left = buf[i*2];
-                //int16_t right = buf[i*2 +1];
-                //in[i] = (float) buf[i];
-                in[i] = ((float)left) / 65536.f;
             }
-          
+
             cout<< "Start of combined data\n";
             for (int i = 0; i < INSIZE; i++){
                 printf("%f, ", in[i]);
@@ -75,11 +68,11 @@ int MainApplication::run()
 
 
             //Windowing I think 
-/*            for( int i =0; i < INSIZE; i++){
+            for( int i =0; i < INSIZE; i++){
                 //in[i] = buf[i];
                 in[i] *= 0.54f - 0.46f * cosf( (3.1415926 * 2.f * i) / (BUFSIZE - 1) ); 
             }
-*/
+
             float start = 0.0;
 
             fftw_execute(p);
@@ -134,6 +127,7 @@ runMutex()
 
 MainApplication::~MainApplication()
 {
+    fftw_cleanup();
     if( s != NULL){
         pa_simple_free(s);
     }
