@@ -40,10 +40,10 @@ gen:
 	-mkdir obs
 	./gen.sh host
 clean:
-	-rm -rf obs
-	-rm Manager
+	-rm -rf obs/*
+	-$(MAKE) -f raspberrypi.mk clean
 
 clobber:
+	-$(MAKE) -f raspberrypi.mk clean
 	-rm -rf obs
-	-rm Manager
 	-rm raspberrypi.mk

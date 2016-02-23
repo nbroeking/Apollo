@@ -13,18 +13,6 @@ BINARY_NAME="capture"
 
 cnt=0
 
-for i in $(find ../Framework/src/ | egrep '.*\.c(pp|xx)?$') ; do
-	# add this file to the list of
-	# sources
-	deps="$( echo $i | sed 's/^src\/*//')"
-
-	# add the resulting object file to
-	# the objects
-	src[$cnt]=$deps
-	obs+=("obs/`basename $i | sed -r 's/\.(cpp|cxx)/.o/g'`")
-	cnt=$[cnt + 1]
-done
-
 # Iterate through and find the
 # c++ source files 
 for i in $(find ./src/ | egrep '.*\.c(pp|xx)?$') ; do
@@ -71,6 +59,10 @@ echo -e \
 echo -e \
 'obs/main.o: main.cpp
 	$(CC) -c $(CFLAGS) $< -pthread -std=c++11 -o $@\n'>&3
+
+echo -e \
+'clean:
+	rm $(BINARY)\n'>&3
 
 
 # iterate through all of the objects and 
