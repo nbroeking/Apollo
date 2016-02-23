@@ -57,7 +57,8 @@ int MainApplication::run()
                 int16_t left = buf[i*2];
                 int16_t right = buf[i*2 +1];
 
-                in[i] = ((float)left + (float)right) / 65536.f;
+                in[i] = (float)left;
+                //in[i] = ((float)left + (float)right) / 65536.f;
             }
 
             cout<< "Start of combined data\n";
