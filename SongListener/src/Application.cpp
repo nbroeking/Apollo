@@ -46,27 +46,13 @@ int MainApplication::run()
         //THis is a bad check so we only do the fft on real data
         if( buf[0] != 0){
            
-            cout<< "Start of raw data LRLRLRLR... of 2048 values\n";
-            for (int i = 0; i < BUFSIZE; i++){
-                printf("%d, ", buf[i]);
-            }
-            cout << endl << "End of raw data\n";
-
             //Combining the left and right streams
            for( int i = 0; i < INSIZE; i++){
                 int16_t left = buf[i*2];
                 int16_t right = buf[i*2 +1];
 
-                in[i] = (float)left;
-                //in[i] = ((float)left + (float)right) / 65536.f;
+                in[i] = ((float)left + (float)right) / 65536.f;
             }
-
-            cout<< "Start of combined data\n";
-            for (int i = 0; i < INSIZE; i++){
-                printf("%f, ", in[i]);
-            }
-            cout << endl << "End of raw data\n";
-
 
             //Windowing I think 
             for( int i =0; i < INSIZE; i++){
@@ -83,10 +69,14 @@ int MainApplication::run()
             {
                 out[i][0] = out[i][0]*out[i][0] + out[i][1]*out[i][1];
             }
-            
+    
+    /*
+     * Process the lights
+     */
+
             for( int i = 0; i < MAXANALYZE; i++){
                 cerr << start << ", " <<  out[i][0] << endl;
-                start += MAXFREQ/INSIZE;
+                start += MAXFREQ/OUTPUTSIZE;
 
             }
             exit(0);          
@@ -94,6 +84,7 @@ int MainApplication::run()
         printf("Completed sample %d\n", buf[0]);   
         //Do a FFT 
     }
+
 	m.lock();
 	isRunning = false;
 	m.unlock();
