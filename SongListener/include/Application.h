@@ -13,12 +13,15 @@ Written By: Nicolas Broeking */
 #include <pulse/simple.h>
 #include <pulse/error.h>
 #include <fftw3.h>
+#include "Pin.h"
 
 #define BUFSIZE 2048
 #define INSIZE (BUFSIZE/2)
 #define OUTPUTSIZE ((INSIZE/2)+1)
 #define MAXFREQ 44100/2
+#define STEPSIZE MAXFREQ/OUTPUTSIZE
 #define MAXANALYZE (OUTPUTSIZE/4)
+#define THRESHOLD 25
 
 class MainApplication
 {
@@ -47,6 +50,11 @@ protected:
     pa_simple *s;
     int error; 
 
+    Pin bass;
+    Pin low;
+    Pin med;
+    Pin high;
+    Pin highest;
 
 	std::mutex m; //Access Mutex
 	BlockingQueue q;

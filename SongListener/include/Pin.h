@@ -14,7 +14,8 @@ public:
 	std::string getVal(); // return the GPIO number associated with the instance of an object
 	~Pin();
 private:
-	std::string gpionum; // GPIO number associated with the instance of an object
+	bool isOn;
+    std::string gpionum; // GPIO number associated with the instance of an object
 	int export_gpio(); // exports GPIO
 	int unexport_gpio(); // unexport GPIO
 	int setdir_gpio(std::string dir); // Set GPIO Direction

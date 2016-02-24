@@ -10,7 +10,8 @@ using namespace std;
 Pin::Pin(string gnum)
 {
 	this->gpionum = gnum;  //Instatiate Pin object for GPIO pin number "gnum"
-	export_gpio();
+	isOn = false;
+    export_gpio();
 	setdir_gpio("out");
 }
 
@@ -63,7 +64,9 @@ int Pin::setdir_gpio(string dir)
  
 int Pin::on()
 {
- 
+    if( isOn){
+       return 0 ;
+    } 
     string setval_str = "/sys/class/gpio/gpio" + this->gpionum + "/value";
     ofstream setvalgpio(setval_str.c_str()); // open value file for gpio
         if (setvalgpio < 0){
@@ -73,12 +76,15 @@ int Pin::on()
  
         setvalgpio << "1" ;//write value to value file
         setvalgpio.close();// close value file 
+        isOn = true;
         return 0;
 }
  
 int Pin::off()
 {
- 
+    if( !isOn){
+        return 0;
+    }
     string setval_str = "/sys/class/gpio/gpio" + this->gpionum + "/value";
     ofstream setvalgpio(setval_str.c_str()); // open value file for gpio
         if (setvalgpio < 0){
@@ -88,6 +94,7 @@ int Pin::off()
  
         setvalgpio << "0" ;//write value to value file
         setvalgpio.close();// close value file 
+        isOn = false;
         return 0;
 }
 int Pin::getval_gpio(string& val){

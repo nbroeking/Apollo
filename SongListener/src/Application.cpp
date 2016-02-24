@@ -29,7 +29,7 @@ int MainApplication::run()
         return 2;
     }
     m.unlock();
-	while (shouldRun)
+	while (shouldRun.load())
 	{
 	    int16_t buf[BUFSIZE];
        
@@ -60,29 +60,98 @@ int MainApplication::run()
                 in[i] *= 0.54f - 0.46f * cosf( (3.1415926 * 2.f * i) / (BUFSIZE - 1) ); 
             }
 
-            float start = 0.0;
 
             fftw_execute(p);
 
+            int threshold[5] = {-100,-100,-100,-100,-100};
+
+            
             // I rewrite to out[i][0] squared absolute value of a complex number out[i].
             for (int i = 0; i < MAXANALYZE; ++i)
             {
-                out[i][0] = out[i][0]*out[i][0] + out[i][1]*out[i][1];
+                out[i][0] = 10*log(out[i][0]*out[i][0] + out[i][1]*out[i][1]);
+                int value = out[i][0];
+
+                if( i*STEPSIZE <= 100){
+                    if( threshold[0] < value){
+                        threshold[0] = value;
+                    }
+                }
+                else if( i*STEPSIZE <= 200){
+                    if( threshold[1] < value){
+                        threshold[1] = value;
+                    }
+                }
+                else if( i*STEPSIZE <= 400){
+                    if( threshold[2] < value){
+                        threshold[2] = value;
+                    }
+                }
+                else if( i*STEPSIZE <= 600){
+                    if( threshold[3] < value){
+                        threshold[3] = value;
+                    }  
+                }
+                else if( i*STEPSIZE <= 800){
+                    if( threshold[4] < value){
+                        threshold[4] = value;
+                    }
+                }
             }
-    
+   
+
+            printf("Thresholds: ");
+            for( int i =0; i < 5; i++){
+                printf("%d, ", threshold[i]);
+            }
+            printf("\n");
+            
     /*
      * Process the lights
      */
+            if( threshold[0] < THRESHOLD*3){
+                bass.off();
+            }             
+            else{
+                bass.on();
+            }
+            if( threshold[1] < THRESHOLD*2){
+                low.off();
+            }             
+            else{
+                low.on();
+            }
 
+           if( threshold[2] < THRESHOLD*2){
+                med.off();
+            }             
+            else{
+                med.on();
+            }
+
+           if( threshold[3] < THRESHOLD*2){
+                high.off();
+            }             
+            else{
+                high.on();
+            }
+
+           if( threshold[4] < THRESHOLD*2){
+                highest.off();
+            }             
+            else{
+                highest.on();
+            }
+
+
+            /*int start = 0.0;
             for( int i = 0; i < MAXANALYZE; i++){
                 cerr << start << ", " <<  out[i][0] << endl;
                 start += MAXFREQ/OUTPUTSIZE;
 
-            }
-            exit(0);          
+            }*/
+            //exit(0);
         }
-        printf("Completed sample %d\n", buf[0]);   
-        //Do a FFT 
     }
 
 	m.lock();
@@ -97,6 +166,11 @@ int MainApplication::run()
 
 //Constructor
 MainApplication::MainApplication():
+bass("5"),
+low("26"),
+med("24"),
+high("19"),
+highest("6"),
 m(),
 q(),
 runMutex()
@@ -119,7 +193,6 @@ runMutex()
 
 MainApplication::~MainApplication()
 {
-    fftw_cleanup();
     if( s != NULL){
         pa_simple_free(s);
     }
@@ -127,6 +200,7 @@ MainApplication::~MainApplication()
         printf("Application could not clean up pulse objects\n");
     }
     fftw_destroy_plan(p);
+    fftw_cleanup();
 }
 void MainApplication::pleaseDie()
 {
