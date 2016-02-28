@@ -17,9 +17,8 @@ public:
     const int numNotes = 51;
 
 protected:
-    double threshold[52];
 
-
+    double threshold(int i);
     uint8_t bit[8];
     const uint8_t bit7 = 0x01;
     const uint8_t bit6 = 0x02;

@@ -55,7 +55,7 @@ protected:
     pa_simple *s;
     int error; 
 
-    std::ofstream  arduino;
+    FILE*  arduino;
     //Pin bass;
     //Pin low;
     //Pin med;
