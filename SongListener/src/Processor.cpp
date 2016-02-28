@@ -11,10 +11,6 @@ using namespace std;
 //Constructor
 Processor::Processor()
 {
-    for( int i = 0; i< 52; i++){
-        threshold[i] = 20;
-    }
-
     bit[0] = bit0;
     bit[1] = bit1;
     bit[2] = bit2;
@@ -30,6 +26,10 @@ Processor::Processor()
 Processor::~Processor()
 {}
 
+double Processor::threshold(int i){
+    return 52;
+    //return -0.0555*i + 50;
+}
 void Processor::process(fftw_complex array[513], int size, int8_t* result){
     //Start setting up for the result
     result[0] = ':';
@@ -45,7 +45,7 @@ void Processor::process(fftw_complex array[513], int size, int8_t* result){
     {
         double currentVal = array[i][0];
 
-        if( currentVal > threshold[i]){
+        if( currentVal > threshold(i)){
             result[octCount] = result[octCount] | bit[(i+offset)%8];
         }
 

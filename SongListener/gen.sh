@@ -6,7 +6,7 @@ obs=()
 src=()
 libs=()
 
-BINARY_NAME="lightd"
+BINARY_NAME="lightsd"
 
 # Iterate through and find the
 # c++ source files 
