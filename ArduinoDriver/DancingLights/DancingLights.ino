@@ -30,7 +30,7 @@ int messageLength = 8;
 #define bit1 0x40
 #define bit0 0x80
 
-#define DEBUG
+//#define DEBUG
 
 /**
  * Set up the Arduino to drive the leds
@@ -38,7 +38,7 @@ int messageLength = 8;
 void setup() {
   //pixels.begin();
 
-  Serial.begin(115200);
+  Serial.begin(9600 );
 
     //Draw the neo pixels
   
@@ -114,13 +114,11 @@ void loop() {
 
   log("Drawing lights");
   
-  //Light 2 
+  //Light 2 - BASS
   bool twoDisp = false;
-
   for( int i = 0; i < 7; i++){
     twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
-  
   if( twoDisp ){
     log("High");
     pin(true, 2);
@@ -129,7 +127,20 @@ void loop() {
     log("LOW");
     pin(false, 2);
   }
- 
+
+  //Other Lights
+  for( int i =3; i < 11; i++){
+    //For each Light check its range
+    bool turnOn = false;
+    for( int j = 3; j <= 3*8; j+=3){
+      if( shouldDisplay(buffer, j) || shouldDisplay(buffer, j+1) || shouldDisplay(buffer, j+2)){
+        pin(true, i);
+      }
+      else{
+        pin(false, i);
+      }
+    }
+  }
 }
 
 /**
