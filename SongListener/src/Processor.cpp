@@ -27,7 +27,8 @@ Processor::~Processor()
 {}
 
 double Processor::threshold(int i){
-    return -0.0555*i + 50;
+    return 50;
+    //return -0.0555*i + 50;
 }
 void Processor::process(fftw_complex array[513], int size, int8_t* result){
     //Start setting up for the result

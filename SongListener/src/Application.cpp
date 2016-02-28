@@ -32,7 +32,7 @@ int MainApplication::run()
        
         
         //Record some data ...
-        if (pa_simple_read(s, buf, BUFSIZE, &error) < 0) {
+        if (pa_simple_read(s, buf, sizeof(buf), &error) < 0) {
             fprintf(stderr, __FILE__": pa_simple_read() failed: %s\n", pa_strerror(error));
             return 3;
         }
@@ -58,10 +58,17 @@ int MainApplication::run()
             fftw_execute(p);
 
             // I rewrite to out[i][0] squared absolute value of a complex number out[i].
+            int step = MAXFREQ/OUTPUTSIZE;
+            int steps = 1;
+
+            //cerr << "Values"<< endl;
             for (int i = 0; i < MAXANALYZE; ++i)
             {
                 double value = out[i][0]*out[i][0] + out[i][1]*out[i][1];
                 out[i][0] = 10*log(value);
+
+                //cerr << steps*step << ", " << out[i][0]<< endl;
+                steps+=1;
             }
    
 
@@ -83,7 +90,8 @@ int MainApplication::run()
                 fwrite(bitmask , sizeof(char), 8, arduino);
             }
             fflush(arduino);
-           
+          
+             
             //exit(0);
         }
     }
