@@ -68,7 +68,18 @@ void setup() {
   pin(false, 8);
   pin(false, 9);
   pin(false, 10);
-  
+
+ /* pin(true, 2);
+  pin(true, 3);
+  pin(true, 4);
+  pin(true, 5);
+  pin(true, 6);
+  pin(true, 7);
+  pin(true, 8);
+  pin(true, 9);
+  pin(true, 10);*/
+
+
   log("Finished Setup");
 }
 
@@ -118,15 +129,15 @@ void loop() {
   
   //Light 2 - BASS
   bool twoDisp = false;
-  for( int i = 0; i < 7; i++){
+  for( int i = 0; i < 4 ; i++){
     twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
   pin(twoDisp, 2);
 
   //Other Lights
-  for( int i =0, j = 3; i < 11; i++, j+=3){
+  for( int i =3, j = 10; i < 11; i++, j+=3){
     //For each Light check its range
-      if( shouldDisplay(buffer, j)){
+      if( shouldDisplay(buffer, j+0) || shouldDisplay(buffer, j+1) || shouldDisplay(buffer, j+2)){
         pin(true, i);
       }
       else{
