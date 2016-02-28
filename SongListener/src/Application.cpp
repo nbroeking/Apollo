@@ -38,7 +38,7 @@ int MainApplication::run()
         }
  
         //THis is a bad check so we only do the fft on real data
-        /*if( buf[0] != 0){
+        if( buf[0] != 0){
            
             //Combining the left and right streams
            for( int i = 0; i < INSIZE; i++){
@@ -60,7 +60,8 @@ int MainApplication::run()
             // I rewrite to out[i][0] squared absolute value of a complex number out[i].
             for (int i = 0; i < MAXANALYZE; ++i)
             {
-                out[i][0] = 10*log(out[i][0]*out[i][0] + out[i][1]*out[i][1]);
+                double value = out[i][0]*out[i][0] + out[i][1]*out[i][1];
+                out[i][0] = 10*log(value);
             }
    
 
@@ -84,7 +85,7 @@ int MainApplication::run()
             fflush(arduino);
            
             //exit(0);
-        }*/
+        }
     }
 
 	m.lock();
@@ -111,6 +112,7 @@ runMutex()
 	isRunning = false;
 	shouldRun.store(true);
 
+    arduino = NULL;
 
     //Oh gods of programming Im sorry for this polling law break
     int retries = 0;
