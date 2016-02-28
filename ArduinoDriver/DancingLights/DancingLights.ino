@@ -12,7 +12,7 @@
 #define NUMPIXELS      64
 
 //Set Up the NeoPixels
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+//Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 //Delayed Value
 int delayval = 500; // delay for half a second
@@ -36,25 +36,37 @@ int messageLength = 8;
  * Set up the Arduino to drive the leds
  */
 void setup() {
-  pixels.begin();
+  //pixels.begin();
 
   Serial.begin(115200);
 
     //Draw the neo pixels
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    //pixels.setPixelColor(i, pixels.Color(0,255,0)); // Moderately bright green color.
-
-    pixels.setPixelColor(i, pixels.Color(255,0,0));
-    
-    pixels.show(); // This sends the updated pixel color to the hardware.
-  }
   
   while(!Serial){ ;} //Wait for serial port to connect
 
   Serial.setTimeout(-1); //If we have not ready bytes for 5 seconds then return;
 
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
+  pinMode(8, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+
+  
+  pin(false, 2);
+  pin(false, 3);
+  pin(false, 4);
+  pin(false, 5);
+  pin(false, 6);
+  pin(false, 7);
+  pin(false, 8);
+  pin(false, 9);
+  pin(false, 10);
+  
   log("Finished Setup");
 }
 
@@ -100,26 +112,31 @@ void loop() {
 
   //Buffer should contain the latest notes here
 
-  //Draw the neo pixels
-  for(int i=0;i<NUMPIXELS;i++){
+  log("Drawing lights");
+  
+  //Light 2 
+  bool twoDisp = false;
 
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    //pixels.setPixelColor(i, pixels.Color(0,255,0)); // Moderately bright green color.
-
-    pixels.setPixelColor(i, pixels.Color(0,0,255));
-    
-    pixels.show(); // This sends the updated pixel color to the hardware.
-    delay(delayval); // Delay for a period of time (in milliseconds).
-
+  for( int i = 0; i < 7; i++){
+    twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
-
+  
+  if( twoDisp ){
+    log("High");
+    pin(true, 2);
+  }
+  else{
+    log("LOW");
+    pin(false, 2);
+  }
+ 
 }
 
 /**
  * Return true or false for a given bit being flipped
  */
 bool shouldDisplay(byte* buffer, int index){
-  int convertedIndex = index -4; 
+  int convertedIndex = index + 8; 
 
   int octave = convertedIndex /8;
 
@@ -132,9 +149,22 @@ bool shouldDisplay(byte* buffer, int index){
 /**
  * 
  */
-void log(char * logger){
+void log(const char* logger){
   #ifdef DEBUG
   Serial.println(logger);
   #endif
+}
+
+/**
+ * Turn on a pin
+ */
+
+void pin(bool on, int pin){
+  if( on){
+    digitalWrite(pin, HIGH);
+  }
+  else{
+    digitalWrite(pin, LOW);
+  }
 }
 
