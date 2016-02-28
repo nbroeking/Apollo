@@ -38,7 +38,10 @@ int main(int argc, char*argv[]) {
    
     signal (SIGINT, timeToDie);
 
-    return app.run();
+    int returnVal = app.run();
+    std::cout<< "Main exited" << std::endl;
+
+    return returnVal;
 }
 
 void timeToDie(int s){

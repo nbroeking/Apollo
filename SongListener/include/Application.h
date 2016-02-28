@@ -14,6 +14,9 @@ Written By: Nicolas Broeking */
 #include <pulse/error.h>
 #include <fftw3.h>
 #include "Pin.h"
+#include "Processor.h"
+#include <fstream>
+#include <iostream>
 
 #define BUFSIZE 2048
 #define INSIZE (BUFSIZE/2)
@@ -34,6 +37,8 @@ public:
 
 protected:
 
+    Processor processor;
+
     //FFT Variables
     fftw_plan p;
     double in[INSIZE];
@@ -50,11 +55,13 @@ protected:
     pa_simple *s;
     int error; 
 
-    Pin bass;
-    Pin low;
-    Pin med;
-    Pin high;
-    Pin highest;
+    std::ofstream  arduino;
+    //Pin bass;
+    //Pin low;
+    //Pin med;
+    //Pin high;
+    //Pin highest;
+
 
 	std::mutex m; //Access Mutex
 	BlockingQueue q;
