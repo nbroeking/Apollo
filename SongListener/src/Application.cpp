@@ -138,6 +138,8 @@ MainApplication::~MainApplication()
     }
     fftw_destroy_plan(p);
     fftw_cleanup();
+
+    printf( "Succesfully cleaned up FFT library\n");
 }
 void MainApplication::pleaseDie()
 {
