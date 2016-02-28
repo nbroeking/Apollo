@@ -78,8 +78,9 @@ int MainApplication::run()
             }
             cout << endl;
 
-            fwrite(bitmask , sizeof(char), 8, arduino);
-
+            if( arduino){
+                fwrite(bitmask , sizeof(char), 8, arduino);
+            }
             fflush(arduino);
            
             //exit(0);
@@ -119,7 +120,7 @@ runMutex()
         sleep(3);
         retries += 1;
 
-        if( retries > 10){
+       if( retries > 10){
             shouldRun.store(false);
             break;
         }
@@ -144,7 +145,9 @@ runMutex()
 MainApplication::~MainApplication()
 {
     printf("LIGHTD: Shutting down the Main Application\n");
-    fclose(arduino);
+    if( arduino){
+        fclose(arduino);
+    }
 
     if( s != NULL){
         pa_simple_free(s);
