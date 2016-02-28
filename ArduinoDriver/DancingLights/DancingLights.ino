@@ -30,6 +30,8 @@ int messageLength = 8;
 #define bit1 0x40
 #define bit0 0x80
 
+byte masks[8] = { bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7};
+
 //#define DEBUG
 
 /**
@@ -109,9 +111,9 @@ void loop() {
   else{
     error = 0;
   }
-
+ 
   //Buffer should contain the latest notes here
-
+  
   log("Drawing lights");
   
   //Light 2 - BASS
@@ -119,27 +121,17 @@ void loop() {
   for( int i = 0; i < 7; i++){
     twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
-  if( twoDisp ){
-    log("High");
-    pin(true, 2);
-  }
-  else{
-    log("LOW");
-    pin(false, 2);
-  }
+  pin(twoDisp, 2);
 
   //Other Lights
-  for( int i =3; i < 11; i++){
+  for( int i =0, j = 3; i < 11; i++, j+=3){
     //For each Light check its range
-    bool turnOn = false;
-    for( int j = 3; j <= 3*8; j+=3){
-      if( shouldDisplay(buffer, j) || shouldDisplay(buffer, j+1) || shouldDisplay(buffer, j+2)){
+      if( shouldDisplay(buffer, j)){
         pin(true, i);
       }
       else{
         pin(false, i);
       }
-    }
   }
 }
 
@@ -150,8 +142,10 @@ bool shouldDisplay(byte* buffer, int index){
   int convertedIndex = index + 8; 
 
   int octave = convertedIndex /8;
+  int ind = convertedIndex %8;
+  
 
-  if( (buffer[octave] & ((byte)(convertedIndex % 8))) != 0) {
+  if( (buffer[octave] & masks[ind]) != 0) { 
     return true;
   }
   return false;
