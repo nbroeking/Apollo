@@ -6,13 +6,15 @@
 #include <SoftwareSerial.h>
 
 // Which pin on the Arduino is connected to the NeoPixels?
-#define PIN            6
+#define PIN            3
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      64
+#define ROW 8
+#define INNERROW ROW-2
 
 //Set Up the NeoPixels
-//Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 //Delayed Value
 int delayval = 500; // delay for half a second
@@ -34,51 +36,29 @@ byte masks[8] = { bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7};
 
 //#define DEBUG
 
+
 /**
  * Set up the Arduino to drive the leds
  */
 void setup() {
-  //pixels.begin();
 
   Serial.begin(9600 );
 
     //Draw the neo pixels
+  pixels.begin();
+
+  
+  drawBass(0,0,0);
+  for( int i = 1; i < INNERROW; i++){
+    for ( int j = 1; j < INNERROW; j++){
+      draw(-1, i, j);
+    }
+  }
+  pixels.show();
   
   while(!Serial){ ;} //Wait for serial port to connect
 
   Serial.setTimeout(-1); //If we have not ready bytes for 5 seconds then return;
-
-  pinMode(2, OUTPUT);
-  pinMode(3, OUTPUT);
-  pinMode(4, OUTPUT);
-  pinMode(5, OUTPUT);
-  pinMode(6, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(8, OUTPUT);
-  pinMode(9, OUTPUT);
-  pinMode(10, OUTPUT);
-
-  
-  pin(false, 2);
-  pin(false, 3);
-  pin(false, 4);
-  pin(false, 5);
-  pin(false, 6);
-  pin(false, 7);
-  pin(false, 8);
-  pin(false, 9);
-  pin(false, 10);
-
- /* pin(true, 2);
-  pin(true, 3);
-  pin(true, 4);
-  pin(true, 5);
-  pin(true, 6);
-  pin(true, 7);
-  pin(true, 8);
-  pin(true, 9);
-  pin(true, 10);*/
-
 
   log("Finished Setup");
 }
@@ -129,21 +109,28 @@ void loop() {
   
   //Light 2 - BASS
   bool twoDisp = false;
-  for( int i = 0; i < 4 ; i++){
+  for( int i = 0; i < 7 ; i++){
     twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
-  pin(twoDisp, 2);
+  if( twoDisp){
+    drawBass(255,0,0);
+  }
+  else{
+    drawBass(0,0,0);
+  }
 
-  //Other Lights
-  for( int i =3, j = 10; i < 11; i++, j+=3){
-    //For each Light check its range
-      if( shouldDisplay(buffer, j+0) || shouldDisplay(buffer, j+1) || shouldDisplay(buffer, j+2)){
-        pin(true, i);
+
+  for( int i = 1; i < INNERROW; i++){
+    for( int j = 1; j < INNERROW; j++){
+      if( shouldDisplay(buffer, 8 + i*INNERROW + j)){
+        draw(i*INNERROW + j, i,j);
       }
       else{
-        pin(false, i);
+        draw(-1, i,j);
       }
+    }
   }
+  pixels.show();
 }
 
 /**
@@ -152,9 +139,11 @@ void loop() {
 bool shouldDisplay(byte* buffer, int index){
   int convertedIndex = index + 8; 
 
+  //int octave = convertedIndex /7;
+  //int ind = (convertedIndex+octave) %8;
+
   int octave = convertedIndex /8;
-  int ind = convertedIndex %8;
-  
+  int ind = (convertedIndex) %8;
 
   if( (buffer[octave] & masks[ind]) != 0) { 
     return true;
@@ -162,6 +151,24 @@ bool shouldDisplay(byte* buffer, int index){
   return false;
 }
 
+void draw(int pos, int x, int y){
+  uint32_t color;
+
+  if( pos < 0){
+        pixels.setPixelColor(ROW*(x) + y, pixels.Color(0,0,0));
+  }
+  else{
+    pixels.setPixelColor(ROW*(x) + y, Wheel(((pos * 256 / 36))));
+  }
+}
+void drawBass(uint32_t red, uint32_t green, uint32_t blue){
+  for( int i = 0; i < ROW; i++){
+    pixels.setPixelColor(i, pixels.Color(red, green, blue));
+    pixels.setPixelColor(ROW*7 + i, pixels.Color(red, green, blue));
+    pixels.setPixelColor(ROW*i, pixels.Color(red, green, blue));
+    pixels.setPixelColor(ROW*i + 7, pixels.Color(red, green, blue));
+  }
+}
 /**
  * 
  */
@@ -182,5 +189,20 @@ void pin(bool on, int pin){
   else{
     digitalWrite(pin, LOW);
   }
+}
+
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  WheelPos = 255 - WheelPos;
+  if(WheelPos < 85) {
+    return pixels.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  }
+  if(WheelPos < 170) {
+    WheelPos -= 85;
+    return pixels.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  }
+  WheelPos -= 170;
+  return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
 
