@@ -61,19 +61,22 @@ int MainApplication::run()
             int step = MAXFREQ/OUTPUTSIZE;
             int steps = 1;
 
-           // cerr << "Values"<< endl;
+            int integral = 0;
+            
+            // cerr << "Values"<< endl;
             for (int i = 0; i < MAXANALYZE; ++i)
             {
                 double value = out[i][0]*out[i][0] + out[i][1]*out[i][1];
+                integral += value;
+                //out[i][0] = 10*log(value);
                 out[i][0] = 10*log(value);
-
-             //   cerr << steps*step << ", " << out[i][0]<< endl;
+                cerr << steps*step << ", " << out[i][0]<< endl;
                 steps+=1;
             }
-   
+            
+            cerr << "Intgral, "<< 10*log(integral) << endl;           
 
-
-                       
+            exit(0);
             int8_t  bitmask[8];
 
             processor.process(out, MAXANALYZE, bitmask);
