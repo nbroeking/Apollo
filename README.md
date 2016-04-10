@@ -1,4 +1,4 @@
-# Project Athena
+# Project Apollo
 Java App to Control Dancing Lights on Raspberry Pi.
 
 ##Installation
@@ -9,11 +9,23 @@ Java App to Control Dancing Lights on Raspberry Pi.
 5. UDev Rules and bluetooth script http://www.instructables.com/id/Turn-your-Raspberry-Pi-into-a-Portable-Bluetooth-A/step5/Setup-the-script-that-gets-executed-when-a-Bluetoo/
 
 ##Intro
-This is project Athena. A wireless bluetooth speaker that processes audio and gives great visualization. Right now I am currently done with Phase 2. The speaker system is compromized of several sections that I will go into depth on how they work.
+This is project Apollo. A wireless bluetooth speaker that processes audio and gives great visualization. Right now I am currently done with Phase 2. The speaker system is compromized of several sections that I will go into depth on how they work.
 
-##Bluetooth
+##System Daemons
+There are three system daemons that are critical for getting the system running.
 
-I turned the raspberry pi into a bluetooth server. To do this I first installed pulse audio. Pulse audio is the default audio daemon for ubuntu so it seemed like the best tool for the job. Then I had to create an upstart script to get pulse to run at startup. This is not an easy task because pulse audio is not designed to run as a system wide daemon ( more on this later). Once the upstart script was in place to run pulse audio in system mode I then needed to install the bluetooth daemon. Once both pieces were installed I needed to figure out how to get them to talk, ( this was the problem I mentioned before). Pulse Audio uses udev to talk to Bluetoothd. This however was not enough because udev rejects pulse audio in system mode. To fix this I needed to go into udev settings and force it to allow system pulse manually. This can be done by changing the rules. Once this was done I then needed to make bluetooth discoverable. I created a upstart script that then puts athena into discoverable mode and then runs the bluetooth tools to handle connections. After this I had a working Bluetooth server. 
+###Pulse Audio
+Pulse audio provides the framework to allow the raspberry pi to play audio. Pulse audio needs to be run at startup in daemon mode as well as in system mode to allow every user access to it. For a bluetooth server there isnt such a thing as users though so you need to set up the bluetooth server. (More on this next). To get pulseaudio working you need to move the file in upstart/pulse-audio to /etc/init/. THis starts and configures the pulseaudio daemon. 
+
+###Bluetooth
+The other part to the bluetooth audio daemon is the actual bluetooth server. Ubuntu uses bluez or bluetoothd as the main daemon. Installing this will start up the bluetooth daemon but we need to configure it after everything starts. To do this copy the init.d/bluetooth-agent file to /etc/init.d/ and the raspberry pi will then work as a bluetooth server. Don't forget to run sudo update-rc.d bluetooth-agent defaults and sudo update-rc.d bluetooth-agent enable. Note if you insalled with the deb package these should be set for you. 
+
+###DBus
+Dbus is started by ubuntu by default so not technically one of the three subsystems. However we need to modify pulse and bluetooth permissions in order to allow everything to work together. To do this copy the files in dbus/ to /etc/dbus-1/system.d Like above the deb package should do this for you. 
+ 
+###Lightsd
+TODO
+
 
 ##Audio Processing
 
@@ -28,21 +40,6 @@ I replaced the java light daemon with this c++ daemon to control the lights. Im 
 The arduino acts as the light card for the system. The raspberry pi can detect the arduino over serial and then can send it a coorisponding bit mask to tell it all the notes. The raspberry pi calculates the threasholds and then creates a bit mask in the format of :XXXXXXX
 where the : marks the start of a command and each X is an 8 bit mask matching if the bin has bet that threshold. The arduino then reads the mask and depending on what bits have been set to 1 decides what lights to turn on. 
 
-##Future Future Work
-
-There are plenty more things I can do to create a really cool light music player but this will have to extend into project 3 time. The main focus of project 3 would be to turn my proof of concept into a hardened product. Things I propose for project 3 are.
-
-1.) Bug fixes: The bluetooth module is no where close to perfect and has plenty of bugs. Working these out would create a really clean bluetooth speaker.
-
-2.) Add speakers, right now I need external ones to get the job done.
-
-3.) Create an enclosure. I am a software engineer and thus never really get to do this so it gives me an opportunity to learn skills in areas I never get to play with.
-
-4.) Create all cables connections and pieces so I can have a standalone box. 
-
-5.) Harden the light daemon: The lights daemon seg faults every once in a while. I would rather this not happen.
-
-6.) I would like to set up the box to ensure that only one person connects via bluetooth at a time or try and get it so it will mix audio signals. Either way right now it crashes when this happens and that is defiantly not ideal. 
 
 ##Notes
 Pulse audio needs to be started by root and in service mode. 
