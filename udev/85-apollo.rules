@@ -1,0 +1,3 @@
+#Apollo rules to turn on discoverable and not depending on a connect or disconnect
+SUBSYSTEM=="bluetooth", ACTION=="add", RUN+="/usr/share/apollo/connect.sh"
+SUBSYSTEM=="bluetooth", ACTION=="remove", RUN+="/usr/share/apollo/disconnect.sh"
