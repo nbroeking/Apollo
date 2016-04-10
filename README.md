@@ -6,22 +6,42 @@ Java App to Control Dancing Lights on Raspberry Pi.
 2. sudo apt-get dist-upgrade
 3. sudo apt-get install pulseaudio
 4. cp upstart/* script /etc/init/
-5. UDev Rules and bluetooth script http://www.instructables.com/id/Turn-your-Raspberry-Pi-into-a-Portable-Bluetooth-A/step5/Setup-the-script-that-gets-executed-when-a-Bluetoo/
+5. UDev Rules and bluetooth script
+   http://www.instructables.com/id/Turn-your-Raspberry-Pi-into-a-Portable-Bluetooth-A/step5/Setup-the-script-that-gets-executed-when-a-Bluetoo/
 
-##Intro
-This is project Apollo. A wireless bluetooth speaker that processes audio and gives great visualization. Right now I am currently done with Phase 2. The speaker system is compromized of several sections that I will go into depth on how they work.
+##Intro This is project Apollo. A wireless bluetooth speaker that processes
+audio and gives great visualization. Right now I am currently done with Phase
+2. The speaker system is compromized of several sections that I will go into
+   depth on how they work.
 
 ##System Daemons
 There are three system daemons that are critical for getting the system running.
 
-###Pulse Audio
-Pulse audio provides the framework to allow the raspberry pi to play audio. Pulse audio needs to be run at startup in daemon mode as well as in system mode to allow every user access to it. For a bluetooth server there isnt such a thing as users though so you need to set up the bluetooth server. (More on this next). To get pulseaudio working you need to move the file in upstart/pulse-audio to /etc/init/. THis starts and configures the pulseaudio daemon. 
+###Pulse Audio Pulse aupdio provides the framework to allow the raspberry pi to
+play audio. Pulse audio needs to be run at startup in daemon mode as well as in
+system mode to allow every user access to it. For a bluetooth server there isnt
+such a thing as users though so you need to set up the bluetooth server. (More
+on this next). To get pulseaudio working you need to move the file in
+upstart/pulse-audio to /etc/init/. THis starts and configures the pulseaudio
+daemon. 
 
-###Bluetooth
-The other part to the bluetooth audio daemon is the actual bluetooth server. Ubuntu uses bluez or bluetoothd as the main daemon. Installing this will start up the bluetooth daemon but we need to configure it after everything starts. To do this copy the init.d/bluetooth-agent file to /etc/init.d/ and the raspberry pi will then work as a bluetooth server. Don't forget to run sudo update-rc.d bluetooth-agent defaults and sudo update-rc.d bluetooth-agent enable. Note if you insalled with the deb package these should be set for you. In addition to the default bluetooth rules we also added 85-apollo.rules to the udev config. This allows Apollo to start and stop scanning depending on wether or not someone is connected. Also note that if you want to change the name of the device you need to do this under /var/bluetooth/DEVICEMAC/config. 
+###Bluetooth The other part to the bluetooth audio daemon is the actual
+bluetooth server. Ubuntu uses bluez or bluetoothd as the main daemon.
+Installing this will start up the bluetooth daemon but we need to configure it
+after everything starts. To do this copy the init.d/bluetooth-agent file to
+/etc/init.d/ and the raspberry pi will then work as a bluetooth server. Don't
+forget to run sudo update-rc.d bluetooth-agent defaults and sudo update-rc.d
+bluetooth-agent enable. Note if you insalled with the deb package these should
+be set for you. In addition to the default bluetooth rules we also added
+85-apollo.rules to the udev config. This allows Apollo to start and stop
+scanning depending on wether or not someone is connected. Also note that if you
+want to change the name of the device you need to do this under
+/var/lib/bluetooth/DEVICEMAC/config. 
 
-###DBus
-Dbus is started by ubuntu by default so not technically one of the three subsystems. However we need to modify pulse and bluetooth permissions in order to allow everything to work together. To do this copy the files in dbus/ to /etc/dbus-1/system.d Like above the deb package should do this for you. 
+###DBus Dbus is started by ubuntu by default so not technically one of the
+three subsystems. However we need to modify pulse and bluetooth permissions in
+order to allow everything to work together. To do this copy the files in dbus/
+to /etc/dbus-1/system.d Like above the deb package should do this for you. 
  
 ###Lightsd
 TODO
