@@ -52,7 +52,7 @@ int MainApplication::run()
             fftw_execute(p);
 
             // I rewrite to out[i][0] squared absolute value of a complex number out[i].
-            int step = MAXFREQ/OUTPUTSIZE;
+            //int step = MAXFREQ/OUTPUTSIZE;
             int steps = 1;
 
             int integral = 0;
@@ -65,11 +65,11 @@ int MainApplication::run()
                 //out[i][0] = 10*log(value);
                 //out[i][0] = 10*log(value);
                 out[i][0] = value;
-                cerr << steps*step << ", " << out[i][0]<< endl;
+                //cerr << steps*step << ", " << out[i][0]<< endl;
                 steps+=1;
             }
             
-            cerr << "Intgral, "<< integral << endl;           
+            //ncerr << "Intgral, "<< integral << endl;           
 
             //exit(0);
             int8_t  bitmask[8];
@@ -77,13 +77,13 @@ int MainApplication::run()
             processor.process(out, MAXANALYZE, bitmask,integral);
 
 
-            cout << "Bitmask" << endl;
+            /*cout << "Bitmask" << endl;
 
             for( int i =0; i < 8; i++){
                 printf(" 0x%02X ", bitmask[i] );
             }
             cout << endl;
-
+            */
             if( arduino){
                 fwrite(bitmask , sizeof(char), 8, arduino);
             }
