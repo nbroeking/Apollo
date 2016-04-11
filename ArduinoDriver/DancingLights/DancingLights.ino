@@ -34,7 +34,7 @@ int messageLength = 8;
 
 byte masks[8] = { bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7};
 
-//#define DEBUG
+#define DEBUG
 
 
 /**
@@ -109,7 +109,7 @@ void loop() {
   
   //Light 2 - BASS
   bool twoDisp = false;
-  for( int i = 0; i < 7 ; i++){
+  for( int i = 0; i < 2 ; i++){
     twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
   if( twoDisp){
@@ -120,16 +120,16 @@ void loop() {
   }
 
 
-  for( int i = 1; i < INNERROW; i++){
-    for( int j = 1; j < INNERROW; j++){
-      if( shouldDisplay(buffer, 8 + i*INNERROW + j)){
-        draw(i*INNERROW + j, i,j);
-      }
-      else{
-        draw(-1, i,j);
-      }
+  for( int i = 0; i < INNERROW*INNERROW-2; i++){
+
+    if( shouldDisplay(buffer, i+2)){
+      draw(i, i/INNERROW, i%INNERROW);
+    }
+    else{
+      draw(1, i/INNERROW, i%INNERROW);
     }
   }
+  
   pixels.show();
 }
 
