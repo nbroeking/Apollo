@@ -34,6 +34,7 @@ extern "C" {
 int main(int argc, char*argv[]) {
 
     MainApplication app;
+    
     globalapp = &app;
    
     signal (SIGINT, timeToDie);

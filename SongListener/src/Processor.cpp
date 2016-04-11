@@ -28,9 +28,41 @@ Processor::~Processor()
 
 double Processor::threshold(int i){
     return 0;
-    //return -0.0555*i + 50;
+
+        //return -0.0555*i + 50;
 }
-void Processor::process(fftw_complex array[513], int size, int8_t* result){
+
+void Processor::setVal(int8_t* message, int index, int val){
+    int convertedIndex = index + 8; 
+
+    int octave = convertedIndex /8;
+    int ind = (convertedIndex) %8;
+    
+    if( val){
+        message[octave] = message[octave] | bit[ind];
+    }
+}
+
+bool Processor::isMax(fftw_complex buffer[513], int index ){
+    
+    
+    if( (buffer[index][0] >= buffer[index-1][0]) && (buffer[index][0] >= buffer[index+1][0])){
+        return true;
+    }
+    return false;
+}
+
+bool Processor::isClose(fftw_complex  buffer[513], int index, int compare){
+    double val1 = buffer[index][0];
+    double val2 = buffer[compare][0];
+
+    if( val1 > 0.8*val2){
+        return true;
+    }
+    return false;
+}
+
+void Processor::process(fftw_complex array[513], int size, int8_t* result, int integral){
     //Start setting up for the result
     result[0] = ':';
 
@@ -38,21 +70,16 @@ void Processor::process(fftw_complex array[513], int size, int8_t* result){
         result[i] = 0;
     }
 
-    int octCount = 1;
-    int offset = 0;
+    if( array[0][0] > array[1][0] && array[0][0]*.8 > array[1][0] && (array[0][0] > (integral/10))){
+        setVal(result, 0, 1);        
+    }
+   
 
-    for (int i = 0; i < size; ++i)
+    for (int i = 2; i < (size-1); ++i)
     {
-        double currentVal = array[i][0];
-
-        if( currentVal > threshold(i)){
-            result[octCount] = result[octCount] | bit[(i+offset)%8];
+        if( isMax(array, i) && (array[i][0] > (integral/15)))//|| (isClose(array, i, i+1) && isMax(array, i+1)) || (isClose(array, i, i-1) && isMax(array,i+1))){
+        {    
+            setVal(result, i, 1);
         }
-
-        //Moving to next bitmap
-        if( i%6 == 0){
-            offset += 1;
-            octCount +=1;
-        }        
     }
 }
