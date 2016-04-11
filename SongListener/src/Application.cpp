@@ -14,18 +14,12 @@ int MainApplication::run()
 {
 	//No two threads can try and run the application at a time. It shouldn't
 	// happen anyway but you never know what mistakes i will make.
-	if( !runMutex.try_lock() || isRunning == true)
-	{
-		return 1;
-	}
-	m.lock();
 	isRunning = true;
 	
     if (!(s = pa_simple_new(NULL, "Song Listener", PA_STREAM_RECORD, NULL, "record", &ss, NULL, NULL, &error))) {
         fprintf(stderr, __FILE__": pa_simple_new() failed: %s\n", pa_strerror(error));
         return 2;
     }
-    m.unlock();
 	while (shouldRun.load())
 	{
 	    int16_t buf[BUFSIZE];
@@ -61,28 +55,32 @@ int MainApplication::run()
             int step = MAXFREQ/OUTPUTSIZE;
             int steps = 1;
 
-           // cerr << "Values"<< endl;
+            int integral = 0;
+            
+            // cerr << "Values"<< endl;
             for (int i = 0; i < MAXANALYZE; ++i)
             {
                 double value = out[i][0]*out[i][0] + out[i][1]*out[i][1];
-                out[i][0] = 10*log(value);
-
-             //   cerr << steps*step << ", " << out[i][0]<< endl;
+                integral += value;
+                //out[i][0] = 10*log(value);
+                //out[i][0] = 10*log(value);
+                out[i][0] = value;
+                cerr << steps*step << ", " << out[i][0]<< endl;
                 steps+=1;
             }
-   
+            
+            cerr << "Intgral, "<< integral << endl;           
 
-
-                       
+            //exit(0);
             int8_t  bitmask[8];
 
-            processor.process(out, MAXANALYZE, bitmask);
+            processor.process(out, MAXANALYZE, bitmask,integral);
 
 
             cout << "Bitmask" << endl;
 
             for( int i =0; i < 8; i++){
-                printf(" %02X ", bitmask[i] );
+                printf(" 0x%02X ", bitmask[i] );
             }
             cout << endl;
 
@@ -96,27 +94,14 @@ int MainApplication::run()
         }
     }
 
-	m.lock();
 	isRunning = false;
-	m.unlock();
-
-	runMutex.unlock();
 
     printf("LIGHTD: Application Exiting Normally\n");
 	return 0;
 }
 
 //Constructor
-MainApplication::MainApplication():
-//bass("5"),
-//low("26"),
-//med("24"),
-//high("19"),
-//highest("6"),
-m(),
-q(),
-runMutex()
-{
+MainApplication::MainApplication(){
 	isRunning = false;
 	shouldRun.store(true);
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 #change if you don't use default analog audio out.
 #THIS DIDN'T WORK FOR MY PI SO I ADDED A amixer COMMAND BELOW
-AUDIOSINK="alsa_output.platform-bcm2835_AUD0.0.analog-stereo"
+AUDIOSINK="alsa_output.0.analog-stereo"
 echo "Executing bluetooth script...|$ACTION|" >> /var/log/bluetooth_dev
 
 ACTION=$(expr "$ACTION" : "\([a-zA-Z]\+\).*")

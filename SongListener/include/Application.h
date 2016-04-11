@@ -18,12 +18,13 @@ Written By: Nicolas Broeking */
 #include <fstream>
 #include <iostream>
 
-#define BUFSIZE 2048
+//#define BUFSIZE 2048
+#define BUFSIZE 4096
 #define INSIZE (BUFSIZE/2)
 #define OUTPUTSIZE ((INSIZE/2)+1)
 #define MAXFREQ 44100/2
 #define STEPSIZE MAXFREQ/OUTPUTSIZE
-#define MAXANALYZE (OUTPUTSIZE/4)
+#define MAXANALYZE 56 //For each bit
 #define THRESHOLD 25
 
 class MainApplication
@@ -61,10 +62,5 @@ protected:
     //Pin med;
     //Pin high;
     //Pin highest;
-
-
-	std::mutex m; //Access Mutex
-	BlockingQueue q;
-	std::mutex runMutex; // So only one thread can run the application at a time
 };
 #endif
