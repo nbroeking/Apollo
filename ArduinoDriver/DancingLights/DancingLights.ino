@@ -4,6 +4,7 @@
   #include <avr/power.h>
 #endif
 #include <SoftwareSerial.h>
+//#include <Random.h>
 
 // Which pin on the Arduino is connected to the NeoPixels?
 #define PIN            3
@@ -11,7 +12,7 @@
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      64
 #define ROW 8
-#define INNERROW ROW-2
+#define INNERROW (ROW-2)
 
 //Set Up the NeoPixels
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
@@ -34,7 +35,7 @@ int messageLength = 8;
 
 byte masks[8] = { bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7};
 
-#define DEBUG
+//#define DEBUG
 
 
 /**
@@ -44,20 +45,20 @@ void setup() {
 
   Serial.begin(9600 );
 
+  randomSeed(0);
+  
     //Draw the neo pixels
   pixels.begin();
 
   
   drawBass(0,0,0);
-  for( int i = 1; i < INNERROW; i++){
-    for ( int j = 1; j < INNERROW; j++){
-      draw(-1, i, j);
-    }
+  for( int k = 0; k < 36; ++k){
+    draw(-1, k);
+
   }
   pixels.show();
   
   while(!Serial){ ;} //Wait for serial port to connect
-
   Serial.setTimeout(-1); //If we have not ready bytes for 5 seconds then return;
 
   log("Finished Setup");
@@ -102,31 +103,35 @@ void loop() {
   else{
     error = 0;
   }
- 
+
+  #ifdef DEBUG
+  for( int i = 1; i< 8; i++){
+    Serial.println(buffer[i], BIN);
+  }
+
+  #endif
   //Buffer should contain the latest notes here
   
   log("Drawing lights");
   
   //Light 2 - BASS
   bool twoDisp = false;
-  for( int i = 0; i < 2 ; i++){
+  for( int i = 0; i < 3 ; i++){
     twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
   if( twoDisp){
-    drawBass(255,0,0);
+    drawBass(random(255),random(255),random(255));
   }
   else{
     drawBass(0,0,0);
   }
-
-
-  for( int i = 0; i < INNERROW*INNERROW-2; i++){
-
-    if( shouldDisplay(buffer, i+2)){
-      draw(i, i/INNERROW, i%INNERROW);
+  
+  for( int i = 0; i < INNERROW*INNERROW; i++){
+    if( shouldDisplay(buffer, i+3)){
+      draw(i, i);
     }
     else{
-      draw(1, i/INNERROW, i%INNERROW);
+      draw(-1, i);
     }
   }
   
@@ -139,6 +144,7 @@ void loop() {
 bool shouldDisplay(byte* buffer, int index){
   int convertedIndex = index + 8; 
 
+ 
   //int octave = convertedIndex /7;
   //int ind = (convertedIndex+octave) %8;
 
@@ -151,16 +157,19 @@ bool shouldDisplay(byte* buffer, int index){
   return false;
 }
 
-void draw(int pos, int x, int y){
+void draw(int pos, int n){
   uint32_t color;
 
+  int realIndex = n+9+2*(n/INNERROW);
+  
   if( pos < 0){
-        pixels.setPixelColor(ROW*(x) + y, pixels.Color(0,0,0));
+    pixels.setPixelColor(realIndex, pixels.Color(0,0,0));
   }
   else{
-    pixels.setPixelColor(ROW*(x) + y, Wheel(((pos * 256 / 36))));
+    pixels.setPixelColor(realIndex, Wheel(((pos * 256 / 36))));
   }
 }
+
 void drawBass(uint32_t red, uint32_t green, uint32_t blue){
   for( int i = 0; i < ROW; i++){
     pixels.setPixelColor(i, pixels.Color(red, green, blue));
