@@ -77,7 +77,7 @@ void Processor::process(fftw_complex array[513], int size, int8_t* result, int i
 
     for (int i = 2; i < (size-1); ++i)
     {
-        if( isMax(array, i) && (array[i][0] > (integral/10)))//|| (isClose(array, i, i+1) && isMax(array, i+1)) || (isClose(array, i, i-1) && isMax(array,i+1))){
+        if( isMax(array, i) && (array[i][0] > (integral/13)))//|| (isClose(array, i, i+1) && isMax(array, i+1)) || (isClose(array, i, i-1) && isMax(array,i+1))){
         {    
             setVal(result, i, 1);
         }
