@@ -3,7 +3,7 @@
 #include <cstring>
 #include <math.h>
 #include <unistd.h>
-
+#include <iostream>
 using namespace std;
 
 
@@ -43,10 +43,16 @@ void Processor::setVal(int8_t* message, int index, int val){
     }
 }
 
-bool Processor::isMax(fftw_complex buffer[513], int index ){
+bool Processor::isMax(fftw_complex buffer[513], int index, double integral ){
     
-    
-    if( (buffer[index][0] >= buffer[index-1][0]) && (buffer[index][0] >= buffer[index+1][0])){
+    if( integral == 0){
+        return false;
+    }
+    double ourValue = buffer[index][0]/ integral;
+    double less = buffer[index-1][0]/integral;
+    double more = buffer[index+1][0]/integral;
+
+    if( (ourValue >= less) && (ourValue >= more)){
         return true;
     }
     return false;
@@ -70,14 +76,14 @@ void Processor::process(fftw_complex array[513], int size, int8_t* result, int i
         result[i] = 0;
     }
 
-    if( array[0][0] > array[1][0] && array[0][0]*.8 > array[1][0] && (array[0][0] > (integral/10))){
+    if( integral > 0 && array[0][0] > array[1][0] && (array[0][0] > (integral/7))){
         setVal(result, 0, 1);        
     }
    
 
     for (int i = 2; i < (size-1); ++i)
     {
-        if( isMax(array, i) && (array[i][0] > (integral/15)))//|| (isClose(array, i, i+1) && isMax(array, i+1)) || (isClose(array, i, i-1) && isMax(array,i+1))){
+        if( isMax(array, i, (double)integral) && (array[i][0] > (integral/8)))//|| (isClose(array, i, i+1) && isMax(array, i+1)) || (isClose(array, i, i-1) && isMax(array,i+1))){
         {    
             setVal(result, i, 1);
         }
