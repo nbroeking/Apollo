@@ -18,7 +18,7 @@ public:
 
 protected:
 
-    bool isMax(fftw_complex  buffer[513], int index );
+    bool isMax(fftw_complex  buffer[513], int index , double integral);
     bool isClose(fftw_complex  buffer[513], int index, int compare);
     void setVal(int8_t* message, int index, int val);
     double threshold(int i);
