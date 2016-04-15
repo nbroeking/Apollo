@@ -72,7 +72,6 @@ void Processor::process(fftw_complex array[513], int size, int8_t* result, int i
     //Start setting up for the result
     result[0] = ':';
 
-    std::cout << "Integral: " << integral << std::endl;
     for( int i = 1; i < 8; i++){
         result[i] = 0;
     }
