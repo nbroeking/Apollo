@@ -1,4 +1,4 @@
-//Project to control the led matrix for the Dancing Lights Project
+///Project to control the led matrix for the Dancing Lights Project
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
   #include <avr/power.h>
@@ -116,18 +116,34 @@ void loop() {
   
   //Light 2 - BASS
   bool twoDisp = false;
-  for( int i = 0; i < 3 ; i++){
+  for( int i = 0; i < 4 ; i++){
     twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
   if( twoDisp){
-    drawBass(random(255),random(255),random(255));
+  
+    int c = random(0, 2);
+    int x,y,z;
+    x = y = z = 0;
+    
+    if( c){
+      x = random(255);
+    }
+    c = random(0,2);
+    if( c){
+      y = random(255);
+    }
+    c = random(0,2);
+    if( c ){
+      z = random(255);
+    }
+    drawBass(x, y,z );
   }
   else{
     drawBass(0,0,0);
   }
   
   for( int i = 0; i < INNERROW*INNERROW; i++){
-    if( shouldDisplay(buffer, i+3)){
+    if( shouldDisplay(buffer, i+4)){
       draw(i, i);
     }
     else{
@@ -166,7 +182,7 @@ void draw(int pos, int n){
     pixels.setPixelColor(realIndex, pixels.Color(0,0,0));
   }
   else{
-    pixels.setPixelColor(realIndex, Wheel(((pos * 256 / 36))));
+    pixels.setPixelColor(realIndex, Wheel((((pos * 256) / 36))));
   }
 }
 
