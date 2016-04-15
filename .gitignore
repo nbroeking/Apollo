@@ -3,7 +3,7 @@ lightsd
 *.idea
 .idea/
 out
-
+pi.img
 .DS_Store
 
 # Mobile Tools for Java (J2ME)

@@ -116,7 +116,7 @@ void loop() {
   
   //Light 2 - BASS
   bool twoDisp = false;
-  for( int i = 0; i < 4 ; i++){
+  for( int i = 0; i < 3 ; i++){
     twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
   if( twoDisp){
@@ -143,7 +143,7 @@ void loop() {
   }
   
   for( int i = 0; i < INNERROW*INNERROW; i++){
-    if( shouldDisplay(buffer, i+4)){
+    if( shouldDisplay(buffer, i+3)){
       draw(i, i);
     }
     else{
