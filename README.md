@@ -4,7 +4,8 @@ Java App to Control Dancing Lights on Raspberry Pi.
 ##Installation
 1. sudo apt-get update
 2. sudo apt-get dist-upgrade
-3. sudo apt-get install pulseaudio linux-firmware
+3. sudo apt-get install ssh g++ make vim git libpulse-dev fftw3-dev <any other tool you need>
+3. sudo apt-get install pulseaudio bluez linux-firmware
 4. cp upstart/* script /etc/init/
 5. cp apollo /usr/share/apollo
 6. Change permissions for dbus
