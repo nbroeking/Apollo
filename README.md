@@ -4,10 +4,11 @@ Java App to Control Dancing Lights on Raspberry Pi.
 ##Installation
 1. sudo apt-get update
 2. sudo apt-get dist-upgrade
-3. sudo apt-get install pulseaudio
+3. sudo apt-get install pulseaudio linux-firmware
 4. cp upstart/* script /etc/init/
-5. UDev Rules and bluetooth script
-   http://www.instructables.com/id/Turn-your-Raspberry-Pi-into-a-Portable-Bluetooth-A/step5/Setup-the-script-that-gets-executed-when-a-Bluetoo/
+5. cp apollo /usr/share/apollo
+6. Change permissions for dbus
+7. 
 
 ##Intro This is project Apollo. A wireless bluetooth speaker that processes
 audio and gives great visualization. Right now I am currently done with Phase

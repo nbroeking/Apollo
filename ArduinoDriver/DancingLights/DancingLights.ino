@@ -37,6 +37,8 @@ byte masks[8] = { bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7};
 
 //#define DEBUG
 
+//Bass iteration
+int bassIter = 0;
 
 /**
  * Set up the Arduino to drive the leds
@@ -121,22 +123,22 @@ void loop() {
   }
   if( twoDisp){
   
-    int c = random(0, 2);
+    int c = random(1, 4);
     int x,y,z;
     x = y = z = 0;
-    
-    if( c){
-      x = random(255);
+
+    int color = random(255);
+
+    if( c == 1){
+      drawBass(color, 255 - color, 0);
     }
-    c = random(0,2);
-    if( c){
-      y = random(255);
+    else if( c == 2){
+      drawBass(color, 0, 255- color);
     }
-    c = random(0,2);
-    if( c ){
-      z = random(255);
+    else{
+      drawBass(0, color, 255-color);
     }
-    drawBass(x, y,z );
+
   }
   else{
     drawBass(0,0,0);
@@ -187,12 +189,24 @@ void draw(int pos, int n){
 }
 
 void drawBass(uint32_t red, uint32_t green, uint32_t blue){
+  
   for( int i = 0; i < ROW; i++){
-    pixels.setPixelColor(i, pixels.Color(red, green, blue));
-    pixels.setPixelColor(ROW*7 + i, pixels.Color(red, green, blue));
-    pixels.setPixelColor(ROW*i, pixels.Color(red, green, blue));
-    pixels.setPixelColor(ROW*i + 7, pixels.Color(red, green, blue));
+    if( (i+1+bassIter)%3 == 0){
+      pixels.setPixelColor(i, pixels.Color(red, green, blue));
+    }
+    if( (i+1+bassIter)%3 == 0){
+      pixels.setPixelColor(ROW*7 + i, pixels.Color(red, green, blue));
+    }
+    if( (i+bassIter)%3 == 0){
+      pixels.setPixelColor(ROW*i , pixels.Color(red, green, blue));
+    }
+    if( (i+bassIter)%3 == 0){
+      pixels.setPixelColor(ROW*i + 7 , pixels.Color(red, green, blue));
+    }
   }
+  bassIter += 1;
+
+  bassIter = bassIter%3;
 }
 /**
  * 
