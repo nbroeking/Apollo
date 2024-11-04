@@ -118,9 +118,13 @@ void loop() {
   
   //Light 2 - BASS
   bool twoDisp = false;
+/*  Commented out the detection for drawing the bass border. Bass is present in every song and displaying the bass
+    made it so that you could not see the other lights up. Instead of overwealming the watcher we are now just going to
+    ignore the bass. 
   for( int i = 0; i < 3 ; i++){
     twoDisp = twoDisp || shouldDisplay(buffer, i);
   }
+*/
   if( twoDisp){
   
     int c = random(1, 4);
